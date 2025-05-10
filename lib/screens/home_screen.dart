@@ -4,14 +4,12 @@ import 'dart:math';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-   final _random = Random();
+  final _random = Random();
 
   final List<Color> _cardColors = [
     Color(0xFFCDDCFD),
@@ -32,6 +30,50 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    prefixIcon: const Icon(Icons.search),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0,horizontal: 10.0),
+                    filled: true,
+                    fillColor: Colors.grey,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    '2025 May',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.more_vert, size: 20),
+                    onPressed: () {
+                      // Handle add note action
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
               Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -42,7 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   itemCount: 20,
                   itemBuilder: (context, index) {
-                     final Color randomColor =_cardColors[_random.nextInt(_cardColors.length)];
+                    final Color randomColor =
+                        _cardColors[_random.nextInt(_cardColors.length)];
                     return Container(
                       // margin: const EdgeInsets.all(8.0),
                       padding: const EdgeInsets.all(10.0),
@@ -71,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ],
-                      )
+                      ),
                     );
                   },
                 ),
