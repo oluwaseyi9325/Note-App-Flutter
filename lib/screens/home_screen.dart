@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+   final _random = Random();
+
+  final List<Color> _cardColors = [
+    Color(0xFFCDDCFD),
+    Color(0xFFFFD8F4),
+    Color(0xFFFBF6AA),
+    Color(0xFFB0E9CA),
+    Color(0xFFFCFAD9),
+    Color(0xFFF1DBF5),
+    Color(0xFFD9E8FC),
+    Color(0xFFFFDBE3),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,12 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   itemCount: 20,
                   itemBuilder: (context, index) {
+                     final Color randomColor =_cardColors[_random.nextInt(_cardColors.length)];
                     return Container(
                       // margin: const EdgeInsets.all(8.0),
                       padding: const EdgeInsets.all(10.0),
                       // height: 100,
                       decoration: BoxDecoration(
-                        color: Colors.blueAccent,
+                        color: randomColor,
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       child: Column(
@@ -43,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                           ),
                           const SizedBox(height: 3.0),
@@ -51,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             'This is the content of note $index. This is the content of note $index. This is the content of note $index. This is the content of note $index. This is the content of note $index.',
                             style: const TextStyle(
                               fontSize: 13,
-                              color: Colors.white70,
+                              color: Colors.black,
                             ),
                           ),
                         ],
