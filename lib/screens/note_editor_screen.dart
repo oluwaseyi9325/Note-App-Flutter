@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:note_app/screens/home_screen.dart';
+import 'package:note_app/widget/custom_header.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NoteEditorScreen extends StatefulWidget {
@@ -49,6 +51,11 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     setState(() {
       selectedCategory = "";
     });
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+    );
   }
 
   void handBottomSheet() {
@@ -109,28 +116,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(onPressed: () => {}, icon: Icon(Icons.arrow_back)),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => {},
-                        icon: Icon(Icons.download),
-                      ),
-                      IconButton(
-                        onPressed: () => {},
-                        icon: Icon(Icons.delete, color: Colors.red),
-                      ),
-                      IconButton(
-                        onPressed: () => {},
-                        icon: Icon(Icons.edit, color: Colors.blue),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              // CustomHeader(),
               SizedBox(height: 16),
               Expanded(
                 child: Column(

@@ -1,5 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:note_app/screens/note_editor_screen.dart';
+import 'package:note_app/screens/note_view_screen.dart';
+import 'package:note_app/widget/home_header.dart';
 import 'dart:math';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,6 +17,22 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _random = Random();
+
+  List<Map<String, dynamic>> notes = [];
+
+  Future<void> fetchNotes() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> savedNotes = prefs.getStringList("notes") ?? [];
+
+    List<Map<String, dynamic>> loadedNotes =
+        savedNotes.map((noteJson) {
+          return jsonDecode(noteJson) as Map<String, dynamic>;
+        }).toList();
+
+    setState(() {
+      notes = loadedNotes;
+    });
+  }
 
   final List<Color> _cardColors = [
     Color(0xFFCDDCFD),
@@ -22,57 +45,55 @@ class _HomeScreenState extends State<HomeScreen> {
     Color(0xFFFFDBE3),
   ];
   @override
+  void initState() {
+    super.initState();
+    fetchNotes();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
+                margin: const EdgeInsets.only(bottom: 16.0),
                 decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(12.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: TextField(
+                  // controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search',
-                    prefixIcon: const Icon(Icons.search),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0,horizontal: 10.0),
+                    hintText: 'Search notes...',
+                    prefixIcon: const Icon(
+                      Icons.search_rounded,
+                      color: Colors.grey,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide.none,
+                    ),
                     filled: true,
-                    fillColor: Colors.grey,
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.white, width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
+                    fillColor: Colors.white,
                   ),
+                  onChanged: (value) {
+                    // You can add filtering logic here
+                  },
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    '2025 May',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_vert, size: 20),
-                    onPressed: () {
-                      // Handle add note action
-                    },
-                  ),
-                ],
-              ),
+              HomeHeader(),
               SizedBox(height: 16.0),
               Expanded(
                 child: GridView.builder(
@@ -82,38 +103,49 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisSpacing: 8.0,
                     mainAxisSpacing: 8.0,
                   ),
-                  itemCount: 20,
+                  itemCount: notes.length,
                   itemBuilder: (context, index) {
                     final Color randomColor =
                         _cardColors[_random.nextInt(_cardColors.length)];
-                    return Container(
-                      // margin: const EdgeInsets.all(8.0),
-                      padding: const EdgeInsets.all(10.0),
-                      // height: 100,
-                      decoration: BoxDecoration(
-                        color: randomColor,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Note Title $index',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                    final myNote = notes[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NoteViewScreen(note: myNote),
                           ),
-                          const SizedBox(height: 3.0),
-                          Text(
-                            'This is the content of note $index. This is the content of note $index. This is the content of note $index. This is the content of note $index. This is the content of note $index.',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Colors.black,
+                        );
+                      },
+                      child: Container(
+                        // margin: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(10.0),
+                        // height: 100,
+                        decoration: BoxDecoration(
+                          color: randomColor,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              myNote['title']??"",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 3.0),
+                            Text(
+                              myNote['body'],
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -122,6 +154,17 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NoteEditorScreen()),
+          );
+        },
+        backgroundColor: Colors.blue,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+        child: const Icon(Icons.add, size: 32, color: Colors.white),
       ),
     );
   }
