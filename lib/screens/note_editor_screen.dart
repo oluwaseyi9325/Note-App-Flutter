@@ -117,6 +117,16 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // CustomHeader(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.arrow_back),
+                  ),
+                 
+                ],
+              ),
               SizedBox(height: 16),
               Expanded(
                 child: Column(
